@@ -47,33 +47,33 @@ Some steps stay manual and are listed in §5 (certificate issuance, R2 public-ac
 
 ```mermaid
 flowchart LR
-  U[Visitor / reviewer] -->|HTTPS| EDGE
+  U["Visitor / reviewer"] -->|"HTTPS"| EDGE
 
-  subgraph EDGE[Cloudflare edge - zone iforecast.es]
-    O[origin.iforecast.es<br/>A proxied<br/>Config Rule: SSL Full (strict)]
-    T[tunnel.iforecast.es<br/>CNAME to cfargotunnel.com, proxied]
-    ACC{{Cloudflare Access<br/>/secure and /secure/*<br/>One-time PIN (main) + GitHub SSO (optional)}}
-    W[Worker cf-assessment-secure<br/>verifies Access JWT]
-    R2[(R2 cf-assessment-flags<br/>private)]
-    TUN[Cloudflare Tunnel cf-assessment]
+  subgraph EDGE["Cloudflare edge - zone iforecast.es"]
+    O["origin.iforecast.es<br/>A proxied<br/>Config Rule: SSL Full (strict)"]
+    T["tunnel.iforecast.es<br/>CNAME to cfargotunnel.com, proxied"]
+    ACC{{"Cloudflare Access<br/>/secure and /secure/*<br/>One-time PIN (main) + GitHub SSO (optional)"}}
+    W["Worker cf-assessment-secure<br/>verifies Access JWT"]
+    R2[("R2 cf-assessment-flags<br/>private")]
+    TUN["Cloudflare Tunnel cf-assessment"]
   end
 
-  O -->|/secure*| ACC
-  T -->|/secure*| ACC
-  ACC -->|allowed| W
-  W -->|binding FLAGS| R2
-  T -->|other paths| TUN
+  O -->|"/secure*"| ACC
+  T -->|"/secure*"| ACC
+  ACC -->|"allowed"| W
+  W -->|"binding FLAGS"| R2
+  T -->|"other paths"| TUN
 
-  subgraph VM[Azure VM - Ubuntu 24.04]
-    NGX443[nginx :443<br/>LE cert + mTLS AOP]
-    NGX8443[nginx 127.0.0.1:8443<br/>LE cert]
-    CFD[cloudflared]
-    APP[headers app 127.0.0.1:8080]
+  subgraph VM["Azure VM - Ubuntu 24.04"]
+    NGX443["nginx :443<br/>LE cert + mTLS AOP"]
+    NGX8443["nginx 127.0.0.1:8443<br/>LE cert"]
+    CFD["cloudflared"]
+    APP["headers app 127.0.0.1:8080"]
   end
 
-  O -->|HTTPS 443, Cloudflare IPs only<br/>AOP client certificate| NGX443
-  TUN <-->|outbound QUIC| CFD
-  CFD -->|HTTPS + originServerName check| NGX8443
+  O -->|"HTTPS 443, Cloudflare IPs only<br/>AOP client certificate"| NGX443
+  TUN <-->|"outbound QUIC"| CFD
+  CFD -->|"HTTPS + originServerName check"| NGX8443
   NGX443 --> APP
   NGX8443 --> APP
 ```

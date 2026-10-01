@@ -37,33 +37,33 @@ Any header echo: `curl -H "X-Probe: hello" https://origin.iforecast.es/` (add `?
 
 ```mermaid
 flowchart LR
-  U[Visitor] -->|HTTPS| EDGE
+  U["Visitor"] -->|"HTTPS"| EDGE
 
-  subgraph EDGE[Cloudflare edge - zone iforecast.es]
-    O[origin.iforecast.es<br/>A proxied<br/>Config Rule: SSL Full (strict)]
-    T[tunnel.iforecast.es<br/>CNAME to tunnel, proxied]
-    ACC{{Cloudflare Access<br/>/secure and /secure/*<br/>One-time PIN (main) + GitHub SSO (optional)}}
-    W[Worker cf-assessment-secure<br/>JWT verified with jose]
-    R2[(R2 cf-assessment-flags<br/>private)]
-    TUN[Cloudflare Tunnel<br/>cf-assessment]
+  subgraph EDGE["Cloudflare edge - zone iforecast.es"]
+    O["origin.iforecast.es<br/>A proxied<br/>Config Rule: SSL Full (strict)"]
+    T["tunnel.iforecast.es<br/>CNAME to tunnel, proxied"]
+    ACC{{"Cloudflare Access<br/>/secure and /secure/*<br/>One-time PIN (main) + GitHub SSO (optional)"}}
+    W["Worker cf-assessment-secure<br/>JWT verified with jose"]
+    R2[("R2 cf-assessment-flags<br/>private")]
+    TUN["Cloudflare Tunnel<br/>cf-assessment"]
   end
 
-  O -->|/secure*| ACC
-  T -->|/secure*| ACC
-  ACC -->|allowed| W
-  W -->|binding FLAGS| R2
-  T -->|other paths| TUN
+  O -->|"/secure*"| ACC
+  T -->|"/secure*"| ACC
+  ACC -->|"allowed"| W
+  W -->|"binding FLAGS"| R2
+  T -->|"other paths"| TUN
 
-  subgraph VM[Azure VM vm-cf-origin - Ubuntu 24.04]
-    NGX443[nginx :443<br/>Let's Encrypt cert<br/>mTLS: AOP client cert required]
-    NGX8443[nginx 127.0.0.1:8443<br/>Let's Encrypt cert]
-    CFD[cloudflared<br/>outbound only]
-    APP[headers app<br/>127.0.0.1:8080]
+  subgraph VM["Azure VM vm-cf-origin - Ubuntu 24.04"]
+    NGX443["nginx :443<br/>Let's Encrypt cert<br/>mTLS: AOP client cert required"]
+    NGX8443["nginx 127.0.0.1:8443<br/>Let's Encrypt cert"]
+    CFD["cloudflared<br/>outbound only"]
+    APP["headers app<br/>127.0.0.1:8080"]
   end
 
-  O -->|other paths, HTTPS 443<br/>only Cloudflare IPs - NSG + ufw<br/>presents AOP client cert| NGX443
-  TUN <-->|outbound QUIC| CFD
-  CFD -->|HTTPS, originServerName verified| NGX8443
+  O -->|"other paths, HTTPS 443<br/>only Cloudflare IPs - NSG + ufw<br/>presents AOP client cert"| NGX443
+  TUN <-->|"outbound QUIC"| CFD
+  CFD -->|"HTTPS, originServerName verified"| NGX8443
   NGX443 --> APP
   NGX8443 --> APP
 ```
