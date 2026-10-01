@@ -1,0 +1,12 @@
+# Copy to terraform.tfvars (git-ignored) and adjust. No secrets in this file:
+# the API token comes from the CLOUDFLARE_API_TOKEN environment variable.
+account_id = "79ef45910a0655be919de9aab5b2debb"
+zone_id    = "f69cacb142bf5ad627e656725111f0fe"
+origin_ip  = "68.221.177.94"
+
+allowed_emails        = ["you@example.com"] # the candidate's own address in the live deployment
+allowed_email_domains = ["cloudflare.com"]
+
+# Generated with openssl (see infra/cloudflare/README.md); kept outside git.
+aop_client_cert_path = "../../.secrets/aop/client.crt"
+aop_client_key_path  = "../../.secrets/aop/client.key"

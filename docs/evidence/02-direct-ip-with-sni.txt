@@ -1,0 +1,14 @@
+﻿# Direct to origin IP with correct SNI/Host (must fail)
+# Run from: candidate workstation, non-Cloudflare residential IP (Windows curl.exe), 2026-10-01 13:36:20 Europe/Madrid
+# Command: curl.exe -sv --connect-timeout 10 --max-time 15 --resolve origin.iforecast.es:443:68.221.177.94 https://origin.iforecast.es/
+
+* Added origin.iforecast.es:443:68.221.177.94 to DNS cache
+* Hostname origin.iforecast.es was found in DNS cache
+* Host origin.iforecast.es:443 was resolved.
+* IPv6: (none)
+* IPv4: 68.221.177.94
+*   Trying 68.221.177.94:443...
+* Connection timed out after 10009 milliseconds
+* closing connection #0
+
+# curl exit code: 28

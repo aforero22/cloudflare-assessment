@@ -1,0 +1,35 @@
+# End-to-end browser test (Cloudflare Access OTP -> Worker -> private R2)
+# Performed by the candidate in a desktop browser on 2026-10-01 at 13:53 CEST (11:53 UTC).
+# The candidate's e-mail address is shown as <candidate-email> in this public repository.
+
+## Steps
+1. Open https://tunnel.iforecast.es/secure
+   -> 302 to https://iforecast.cloudflareaccess.com/cdn-cgi/access/login/tunnel.iforecast.es?...
+2. Choose "One-time PIN", enter <candidate-email>, enter the code received by e-mail.
+3. Redirected back to https://tunnel.iforecast.es/secure
+
+## Result: /secure (Content-Type: text/html; charset=utf-8)
+<candidate-email> authenticated at 2026-10-01T11:53:12.000Z from ES
+  - "ES" is a link to /secure/ES
+  - TIMESTAMP = iat of the Access JWT (time of authentication), ISO-8601 UTC
+
+## Result: /secure/ES (Content-Type: image/svg+xml)
+The Spanish flag SVG renders; it is streamed by the Worker from the private R2 bucket
+cf-assessment-flags (object flags/es.svg). The bucket has no public URL (r2.dev disabled,
+no custom domain), so the Worker binding is the only way to read it.
+
+## Corroboration from Cloudflare logs (read via API from the agent box, 13:55 CEST)
+
+### Access authentication log (GET /accounts/{account}/access/logs/access_requests)
+{"t":"2026-10-01T11:53:12Z","app":"tunnel.iforecast.es","allowed":true,"method":"onetimepin","country":"es","email":"<candidate-email>"}
+
+### Workers Observability, script cf-assessment-secure (application logs contain no identity by design)
+2026-10-01T11:53:13Z  GET https://tunnel.iforecast.es/secure     -> {"path":"/secure","status":200,"outcome":"page_served"}
+2026-10-01T11:53:52Z  GET https://tunnel.iforecast.es/secure/ES  -> {"path":"/secure/:country","status":200,"outcome":"flag_served"}
+2026-10-01T11:53:55Z  GET https://tunnel.iforecast.es/secure     -> {"path":"/secure","status":200,"outcome":"page_served"}
+2026-10-01T11:53:59Z  GET https://tunnel.iforecast.es/secure     -> {"path":"/secure","status":200,"outcome":"page_served"}
+Errors: 0
+
+## Note
+A login with a real @cloudflare.com address is covered by the same policy (include: email domain
+cloudflare.com) but has to be verified by the reviewers themselves.

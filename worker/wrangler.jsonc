@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cf-assessment-secure",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-15",
+  // jose uses Web Crypto; Node compatibility is unnecessary.
+  "workers_dev": false,
+  "preview_urls": false,
+  // Access must protect both the page and every flag path. The Access application
+  // "cf-assessment-secure" has one destination per route below (same AUD), so the
+  // Worker never runs on an unprotected path. tunnel.* is the hostname required by
+  // the assignment; origin.* gets the same protected experience on the proxied host.
+  "routes": [
+    { "pattern": "tunnel.iforecast.es/secure", "zone_name": "iforecast.es" },
+    { "pattern": "tunnel.iforecast.es/secure/*", "zone_name": "iforecast.es" },
+    { "pattern": "origin.iforecast.es/secure", "zone_name": "iforecast.es" },
+    { "pattern": "origin.iforecast.es/secure/*", "zone_name": "iforecast.es" }
+  ],
+  // Create this private bucket before deployment; do not enable public access.
+  "r2_buckets": [{ "binding": "FLAGS", "bucket_name": "cf-assessment-flags" }],
+  "vars": {
+    "TEAM_DOMAIN": "https://iforecast.cloudflareaccess.com",
+    // Audience (AUD) tag of the Access application "cf-assessment-secure".
+    // Not a secret: it identifies the app; tokens are verified against the team JWKS.
+    "POLICY_AUD": "56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733"
+  },
+  // Application logs contain categories only, never identity or credentials.
+  "observability": { "enabled": true }
+}

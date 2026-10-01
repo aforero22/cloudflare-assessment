@@ -1,0 +1,44 @@
+# Dependencies / build output
+node_modules/
+.wrangler/
+dist/
+coverage/
+.flags-cache/
+.npm-cache/
+
+# Secrets - never commit
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+*.token
+credentials.json
+*.cfargotunnel.json
+.secrets/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Archives / misc
+*.zip
+*.tgz
+*.tar.gz
+*.log
+.DS_Store
+Thumbs.db
+
+# Confidential / internal material kept outside the public repo
+docs/assignment.pdf
+docs/assignment.txt

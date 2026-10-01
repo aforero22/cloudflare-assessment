@@ -1,0 +1,7 @@
+# gitleaks configuration: default rules + one documented allowlist entry.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Cloudflare Access application AUD tag: a public identifier (sent in every Access redirect URL as kid=...), not a credential"
+regexes = ['''56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733''']

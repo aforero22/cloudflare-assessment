@@ -1,0 +1,30 @@
+{
+  "name": "cf-assessment-secure",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "lint": "tsc --noEmit && eslint .",
+    "test": "vitest run",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types --strict-vars=false"
+  },
+  "dependencies": {
+    "jose": "^6.2.12"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@eslint/js": "^10.0.0",
+    "eslint": "^10.0.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.0",
+    "vitest": "~4.1.11",
+    "wrangler": "^4.145.0"
+  },
+  "overrides": {
+    "vite": "^7.3.6"
+  }
+}

@@ -1,0 +1,136 @@
+# NOTE: snapshot taken at 13:36, before the origin.iforecast.es destinations were added (13:41) and before
+# the Worker routes were re-created (16:15). Current Access/route state: 13-access-final-state.txt and
+# 14-redeploy-and-plan.txt.
+# Cloudflare API state (read-only GETs from the agent box), 2026-10-01 13:36:56 Europe/Madrid
+
+## Zone SSL mode (must remain "full" for the existing production hosts)
+{"id":"ssl","value":"full"}
+
+## Zone-level AOP (left off on purpose)
+{"id":"tls_client_auth","value":"off"}
+
+## New DNS records
+{"type":"A","name":"origin.iforecast.es","content":"68.221.177.94","proxied":true,"comment":"cf-assessment origin (managed by infra/cloudflare)"}
+{"type":"CNAME","name":"tunnel.iforecast.es","content":"f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6.cfargotunnel.com","proxied":true,"comment":"cf-assessment tunnel (managed by infra/cloudflare)"}
+
+## Configuration Rule (http_config_settings)
+{
+  "id": "5c135dd52cea402db74278159c1630e7",
+  "phase": "http_config_settings",
+  "rules": [
+    {
+      "description": "cf-assessment: SSL Full (strict) only for origin+tunnel hosts",
+      "expression": "(http.host in {\"origin.iforecast.es\" \"tunnel.iforecast.es\"})",
+      "action": "set_config",
+      "action_parameters": {
+        "ssl": "strict"
+      },
+      "enabled": true
+    }
+  ]
+}
+
+## Redirect Rule (http_request_dynamic_redirect)
+{
+  "id": "2fdef789246743c4861f84b3ac9a3ed1",
+  "phase": "http_request_dynamic_redirect",
+  "rules": [
+    {
+      "description": "cf-assessment: Always HTTPS for origin+tunnel hosts",
+      "expression": "(http.host in {\"origin.iforecast.es\" \"tunnel.iforecast.es\"} and not ssl)",
+      "action": "redirect",
+      "action_parameters": {
+        "from_value": {
+          "preserve_query_string": false,
+          "status_code": 301,
+          "target_url": {
+            "expression": "concat(\"https://\", http.host, http.request.uri)"
+          }
+        }
+      },
+      "enabled": true
+    }
+  ]
+}
+
+## Per-hostname AOP
+{"hostname":"origin.iforecast.es","enabled":true,"status":"active","cert_id":"f9deeaa7-daec-48cf-a343-c2959f44ff63","issuer":"CN=cf-assessment AOP private CA,O=iforecast.es cf-assessment","serial_number":"28252689117903853399258494582623818032245154877","expires_on":"2027-10-01T11:29:59Z"}
+
+## Tunnel
+{"id":"f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6","name":"cf-assessment","status":"healthy","config_src":"cloudflare","connections":[{"colo_name":"mad05","origin_ip":"68.221.177.94","client_version":"2026.9.3"},{"colo_name":"mad07","origin_ip":"68.221.177.94","client_version":"2026.9.3"},{"colo_name":"mad05","origin_ip":"68.221.177.94","client_version":"2026.9.3"},{"colo_name":"mad01","origin_ip":"68.221.177.94","client_version":"2026.9.3"}]}
+[
+  {
+    "service": "https://127.0.0.1:8443",
+    "hostname": "tunnel.iforecast.es",
+    "originRequest": {
+      "http2Origin": true,
+      "noTLSVerify": false,
+      "originServerName": "tunnel.iforecast.es"
+    }
+  },
+  {
+    "service": "http_status:404"
+  }
+]
+
+## Access application
+{
+  "id": "12466994-8322-407c-9c72-0fc96c4d567e",
+  "name": "cf-assessment-secure",
+  "type": "self_hosted",
+  "aud": "56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733",
+  "destinations": [
+    {
+      "type": "public",
+      "uri": "tunnel.iforecast.es/secure"
+    },
+    {
+      "type": "public",
+      "uri": "tunnel.iforecast.es/secure/*"
+    }
+  ],
+  "session_duration": "24h",
+  "allowed_idps": [],
+  "policies": [
+    {
+      "name": "cf-assessment-allow-owner-and-cloudflare",
+      "decision": "allow",
+      "include": [
+        {
+          "email": {
+            "email": "<candidate-email>"
+          }
+        },
+        {
+          "email_domain": {
+            "domain": "cloudflare.com"
+          }
+        }
+      ]
+    }
+  ]
+}
+
+## Identity providers
+# SUPERSEDED: GitHub was added later (id bed3561d-...); current state in 15-github-idp.txt and 17-final-logins.txt.
+[{"id":"85134fd8-55cf-42d8-bb85-dbd9c0ad2806","type":"onetimepin"}]
+
+## R2 bucket
+{"name":"cf-assessment-flags","creation_date":"2026-10-01T11:33:56.264Z","location":"WNAM","storage_class":"Standard","jurisdiction":"default"}
+r2.dev managed domain: {"enabled":false}
+custom domains: []
+objects: {"count":257,"sample":{"key":"flags/es.svg","size":80958,"http_metadata":{"contentType":"image/svg+xml"}}}
+## Existing production records (unchanged)
+["CNAME","cashflow.iforecast.es",true]
+["CNAME","_domainconnect.iforecast.es",true]
+["CNAME","iforecast.es",true]
+["CNAME","trazavolt.iforecast.es",true]
+["CNAME","www.iforecast.es",true]
+["MX","iforecast.es",false]
+["MX","iforecast.es",false]
+["MX","iforecast.es",false]
+["NS","iforecast.es",false]
+["NS","iforecast.es",false]
+["TXT","_dmarc.iforecast.es",false]
+["TXT","iforecast.es",false]
+["TXT","zmail._domainkey.iforecast.es",false]

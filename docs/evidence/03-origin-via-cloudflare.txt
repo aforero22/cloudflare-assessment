@@ -1,0 +1,40 @@
+﻿# origin.iforecast.es through Cloudflare proxy (Full strict + per-hostname AOP) - must return all headers
+# Run from: candidate workstation, non-Cloudflare residential IP (Windows curl.exe), 2026-10-01 13:36:30 Europe/Madrid
+# Command: curl.exe -s -i -H "X-Probe: cf-assessment-evidence" https://origin.iforecast.es/
+
+HTTP/1.1 200 OK
+Date: Thu, 01 Oct 2026 11:36:30 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 579
+Connection: keep-alive
+Server: cloudflare
+Cache-Control: no-store
+cf-cache-status: DYNAMIC
+Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=PtODeqGWBKfVYKhwBfUdsbUQ%2BIJ3CtXWv9r7%2BIBxotA6sM8h18XpeZmgNb6aizrq7TwUnwSeDLGQeTA7c0RzDdX63jcCdbACTpVA0uBM2YReMK2cPLoFgMx%2FSZoMcRM5pJ7FEO7p"}]}
+CF-RAY: a43b2b877e97db84-MAD
+alt-svc: h3=":443"; ma=86400
+
+{
+  "method": "GET",
+  "path": "/",
+  "http_version": "HTTP/1.1",
+  "received_at": "2026-10-01T11:36:30+00:00",
+  "header_count": 12,
+  "headers": {
+    "Host": "origin.iforecast.es",
+    "x-forwarded-for": "<redacted-admin-ip>",
+    "cf-ray": "a43b2b877e97db84-MAD",
+    "user-agent": "curl/8.21.0",
+    "x-probe": "cf-assessment-evidence",
+    "accept": "*/*",
+    "cdn-loop": "cloudflare; loops=1",
+    "cf-connecting-ip": "<redacted-admin-ip>",
+    "cf-ipcountry": "ES",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "x-forwarded-proto": "https",
+    "accept-encoding": "gzip, br"
+  }
+}
+
+# curl exit code: 0

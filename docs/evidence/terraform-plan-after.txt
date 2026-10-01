@@ -1,0 +1,25 @@
+# terraform plan after apply (-detailed-exitcode = 0 -> no changes), 2026-10-01 13:43 Europe/Madrid
+
+cloudflare_authenticated_origin_pulls_hostname_certificate.origin: Refreshing state... [id=f9deeaa7-daec-48cf-a343-c2959f44ff63]
+cloudflare_r2_bucket.flags: Refreshing state... [id=cf-assessment-flags]
+cloudflare_zero_trust_tunnel_cloudflared.this: Refreshing state... [id=f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6]
+cloudflare_dns_record.origin: Refreshing state... [id=cafac84ada372ddc039d193edc3d1724]
+cloudflare_worker.secure: Refreshing state... [id=41d0347049724ce9a2ed79d264e67177]
+cloudflare_ruleset.config_settings: Refreshing state... [id=5c135dd52cea402db74278159c1630e7]
+cloudflare_ruleset.redirects: Refreshing state... [id=2fdef789246743c4861f84b3ac9a3ed1]
+cloudflare_zero_trust_access_policy.allow_owner_and_cloudflare: Refreshing state... [id=1262eec6-1476-41a8-9d2c-5ee099b26919]
+cloudflare_authenticated_origin_pulls.origin: Refreshing state... [id=origin.iforecast.es]
+cloudflare_dns_record.tunnel: Refreshing state... [id=615b34105426877e5a6a082e0870794f]
+cloudflare_zero_trust_tunnel_cloudflared_config.this: Refreshing state... [id=f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6]
+cloudflare_workers_route.secure["tunnel.iforecast.es/secure"]: Refreshing state... [id=f8384b1a2f514b78b63def8876389126]
+cloudflare_workers_route.secure["origin.iforecast.es/secure"]: Refreshing state... [id=b25d86da0f5b49cd9728aa5e90fa0743]
+data.cloudflare_zero_trust_tunnel_cloudflared_token.this: Reading...
+cloudflare_workers_route.secure["origin.iforecast.es/secure/*"]: Refreshing state... [id=2368fdbf2cf64ee8900951d95ecca861]
+cloudflare_workers_route.secure["tunnel.iforecast.es/secure/*"]: Refreshing state... [id=a0560b30999f4fa5a3ff660c50f6c86d]
+cloudflare_zero_trust_access_application.secure: Refreshing state... [id=12466994-8322-407c-9c72-0fc96c4d567e]
+data.cloudflare_zero_trust_tunnel_cloudflared_token.this: Read complete after 0s
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.

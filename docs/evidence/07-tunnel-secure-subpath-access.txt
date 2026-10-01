@@ -1,0 +1,22 @@
+﻿# /secure/ES is protected by Cloudflare Access
+# Run from: candidate workstation, non-Cloudflare residential IP (Windows curl.exe), 2026-10-01 13:36:31 Europe/Madrid
+# Command: curl.exe -s -I https://tunnel.iforecast.es/secure/ES
+
+HTTP/1.1 302 Found
+Date: Thu, 01 Oct 2026 11:36:31 GMT
+Content-Type: text/html; charset=UTF-8
+Connection: keep-alive
+Www-Authenticate: Cloudflare-Access resource_metadata="https://tunnel.iforecast.es/.well-known/cloudflare-access-protected-resource/secure/ES"
+Access-Control-Allow-Credentials: true
+Expires: Thu, 01 Jan 1970 00:00:01 GMT
+Cache-Control: private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Set-Cookie: CF_AppSession=d6cc8b2a9ea981e3; Expires=Fri, 02 Oct 2026 11:36:31 GMT; Path=/; Secure; HttpOnly
+Location: https://iforecast.cloudflareaccess.com/cdn-cgi/access/login/tunnel.iforecast.es?kid=56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733&meta=<Access metadata JWT truncated>&redirect_url=%2Fsecure%2FES
+Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2FMp8yWUXHkP%2BDkAsy7%2B9XmVT11ZW4xB4irTkhOzRafU0WbOojYJ66ILoJfzB7lyQLOpDBZAwhfbpgvDYI9n9dG92ox0PkKj8KD%2BUDlQUziIrL5bpStVgC00aGZCvE0eQNm1t2C50"}]}
+Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+Server: cloudflare
+CF-RAY: a43b2b8c1b397db8-MAD
+alt-svc: h3=":443"; ma=86400
+
+
+# curl exit code: 0

@@ -1,0 +1,53 @@
+# On-VM checks (bypass the firewall by connecting from localhost), 2026-10-01 11:36:32 UTC
+
+$ curl -skv https://127.0.0.1/   # unknown SNI -> ssl_reject_handshake
+* ALPN: curl offers h2,http/1.1
+* TLSv1.3 (IN), TLS alert, unrecognized name (624):
+* OpenSSL/3.0.13: error:0A000458:SSL routines::tlsv1 unrecognized name
+exit=0
+# note: 'exit=0' is the status of the capture wrapper, not of curl; the handshake failed with the TLS alert above
+
+$ curl -sv --resolve origin.iforecast.es:443:127.0.0.1 https://origin.iforecast.es/   # valid SNI, no client cert
+HTTP 400
+<title>400 No required SSL certificate was sent</title>
+
+$ openssl x509 (origin certificate served by nginx)
+issuer=C = US, O = Let's Encrypt, CN = YE2
+subject=CN = origin.iforecast.es
+notBefore=Oct  1 10:31:21 2026 GMT
+notAfter=Dec 30 10:31:20 2026 GMT
+X509v3 Subject Alternative Name: 
+    DNS:origin.iforecast.es, DNS:tunnel.iforecast.es
+
+$ tail of nginx origin access log (Cloudflare requests presenting the AOP client cert)
+162.158.167.163 cf_ip=<client-ipv6> ray=a43b29a03867ed38-SJC host=origin.iforecast.es "GET / HTTP/2.0" 200 1146 ssl_client_verify=SUCCESS
+172.71.154.16 cf_ip=<client-ipv6> ray=a43b29a41a53cce5-SJC host=origin.iforecast.es "GET /favicon.ico HTTP/2.0" 200 1204 ssl_client_verify=SUCCESS
+162.158.122.196 cf_ip=<redacted-admin-ip> ray=a43b2b877e97db84-MAD host=origin.iforecast.es "GET / HTTP/2.0" 200 579 ssl_client_verify=SUCCESS
+127.0.0.1 cf_ip=- ray=- host=origin.iforecast.es "GET / HTTP/2.0" 400 230 ssl_client_verify=NONE
+127.0.0.1 cf_ip=- ray=- host=origin.iforecast.es "" 400 0 ssl_client_verify=NONE
+
+$ systemctl is-active headers-app nginx cloudflared
+active
+active
+active
+
+$ ss -ltnp (listeners)
+State  Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess
+LISTEN 0      511        127.0.0.1:8443       0.0.0.0:*          
+LISTEN 0      5          127.0.0.1:8080       0.0.0.0:*          
+LISTEN 0      511          0.0.0.0:443        0.0.0.0:*          
+LISTEN 0      4096         0.0.0.0:22         0.0.0.0:*          
+LISTEN 0      511             [::]:443           [::]:*          
+LISTEN 0      4096            [::]:22            [::]:*          
+
+$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW       <redacted-admin-ip>               # admin ssh
+443/tcp                    ALLOW       173.245.48.0/20            # cloudflare
+443/tcp                    ALLOW       103.21.244.0/22            # cloudflare
+443/tcp                    ALLOW       103.22.200.0/22            # cloudflare
+# (output truncated here; the remaining rules allow 443 from the other Cloudflare IPv4/IPv6 ranges)
+...

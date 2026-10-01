@@ -1,0 +1,377 @@
+# terraform plan (adoption of API-created resources via import blocks)
+# Run from the agent box on 2026-10-01 13:38 Europe/Madrid with CLOUDFLARE_API_TOKEN set inline (not stored).
+# Terraform v1.16.4, provider cloudflare/cloudflare v5.26.0. Not applied (no state written).
+# Result: 11 to import, 0 to add, 0 to destroy. The single in-place update is the per-hostname AOP
+# association: the provider's import does not populate the 'config' list, so the plan re-sends the
+# identical config (hostname origin.iforecast.es, same cert_id, enabled=true) - an idempotent PUT.
+
+cloudflare_ruleset.redirects: Preparing import... [id=zones/f69cacb142bf5ad627e656725111f0fe/2fdef789246743c4861f84b3ac9a3ed1]
+cloudflare_ruleset.config_settings: Preparing import... [id=zones/f69cacb142bf5ad627e656725111f0fe/5c135dd52cea402db74278159c1630e7]
+cloudflare_zero_trust_tunnel_cloudflared.this: Preparing import... [id=79ef45910a0655be919de9aab5b2debb/f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6]
+cloudflare_authenticated_origin_pulls_hostname_certificate.origin: Preparing import... [id=f69cacb142bf5ad627e656725111f0fe/f9deeaa7-daec-48cf-a343-c2959f44ff63]
+cloudflare_zero_trust_access_policy.allow_owner_and_cloudflare: Preparing import... [id=79ef45910a0655be919de9aab5b2debb/1262eec6-1476-41a8-9d2c-5ee099b26919]
+cloudflare_dns_record.origin: Preparing import... [id=f69cacb142bf5ad627e656725111f0fe/cafac84ada372ddc039d193edc3d1724]
+cloudflare_r2_bucket.flags: Preparing import... [id=79ef45910a0655be919de9aab5b2debb/cf-assessment-flags/default]
+cloudflare_zero_trust_tunnel_cloudflared.this: Refreshing state... [id=f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6]
+cloudflare_dns_record.origin: Refreshing state... [id=cafac84ada372ddc039d193edc3d1724]
+cloudflare_authenticated_origin_pulls_hostname_certificate.origin: Refreshing state... [id=f9deeaa7-daec-48cf-a343-c2959f44ff63]
+cloudflare_zero_trust_access_policy.allow_owner_and_cloudflare: Refreshing state... [id=1262eec6-1476-41a8-9d2c-5ee099b26919]
+cloudflare_ruleset.config_settings: Refreshing state... [id=5c135dd52cea402db74278159c1630e7]
+cloudflare_ruleset.redirects: Refreshing state... [id=2fdef789246743c4861f84b3ac9a3ed1]
+cloudflare_zero_trust_tunnel_cloudflared_config.this: Preparing import... [id=79ef45910a0655be919de9aab5b2debb/f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6]
+cloudflare_dns_record.tunnel: Preparing import... [id=f69cacb142bf5ad627e656725111f0fe/615b34105426877e5a6a082e0870794f]
+cloudflare_authenticated_origin_pulls.origin: Preparing import... [id=f69cacb142bf5ad627e656725111f0fe/origin.iforecast.es]
+data.cloudflare_zero_trust_tunnel_cloudflared_token.this: Reading...
+cloudflare_r2_bucket.flags: Refreshing state... [id=cf-assessment-flags]
+data.cloudflare_zero_trust_tunnel_cloudflared_token.this: Read complete after 0s
+cloudflare_dns_record.tunnel: Refreshing state... [id=615b34105426877e5a6a082e0870794f]
+cloudflare_zero_trust_tunnel_cloudflared_config.this: Refreshing state... [id=f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6]
+cloudflare_authenticated_origin_pulls.origin: Refreshing state... [id=origin.iforecast.es]
+cloudflare_zero_trust_access_application.secure: Preparing import... [id=accounts/79ef45910a0655be919de9aab5b2debb/12466994-8322-407c-9c72-0fc96c4d567e]
+cloudflare_zero_trust_access_application.secure: Refreshing state... [id=12466994-8322-407c-9c72-0fc96c4d567e]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # cloudflare_authenticated_origin_pulls.origin will be updated in-place
+  # (imported from "f69cacb142bf5ad627e656725111f0fe/origin.iforecast.es")
+  ~ resource "cloudflare_authenticated_origin_pulls" "origin" {
+      ~ cert_id          = "f9deeaa7-daec-48cf-a343-c2959f44ff63" -> (known after apply)
+      ~ cert_status      = "active" -> (known after apply)
+      ~ cert_updated_at  = "2026-10-01T11:30:23Z" -> (known after apply)
+      ~ cert_uploaded_on = "2026-10-01T11:30:22Z" -> (known after apply)
+      ~ certificate      = <<-EOT
+            -----BEGIN CERTIFICATE-----
+            MIICFTCCAbugAwIBAgIUBPLk9yJTcXU0EApipk+keziMpD0wCgYIKoZIzj0EAwIw
+            TDEjMCEGA1UECgwaaWZvcmVjYXN0LmVzIGNmLWFzc2Vzc21lbnQxJTAjBgNVBAMM
+            HGNmLWFzc2Vzc21lbnQgQU9QIHByaXZhdGUgQ0EwHhcNMjYxMDAxMTEyOTU5WhcN
+            MjcxMDAxMTEyOTU5WjBSMSMwIQYDVQQKDBppZm9yZWNhc3QuZXMgY2YtYXNzZXNz
+            bWVudDErMCkGA1UEAwwiY2xvdWRmbGFyZS1hb3Atb3JpZ2luLmlmb3JlY2FzdC5l
+            czBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABP48rKrfoaFsMwb2T+cvSFDyFkiG
+            bXrsNVIl4aGE3ixPOx42u5zGUIcSe1wZy8USf8wcFTH6DxP8RZuMKyWXkxujdTBz
+            MAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUF
+            BwMCMB0GA1UdDgQWBBRuqLebu79UPmEk8NtWj4B1rBD+gDAfBgNVHSMEGDAWgBRD
+            NgNSU+vKAWMH7VrzUNX8XyCG8jAKBggqhkjOPQQDAgNIADBFAiEAxiRavCz3HGD4
+            8vP9rp7yjPem+N6q6ZPUqDHfWjiszX4CIDJ+0BcXmTcqsg7sxv3bmZV97g+8cKK0
+            eSAMyAa4odK9
+            -----END CERTIFICATE-----
+        EOT -> (known after apply)
+      + config           = [
+          + {
+              + cert_id  = "f9deeaa7-daec-48cf-a343-c2959f44ff63"
+              + enabled  = true
+              + hostname = "origin.iforecast.es"
+            },
+        ]
+      ~ created_at       = "2026-10-01T11:33:05Z" -> (known after apply)
+      ~ enabled          = true -> (known after apply)
+      ~ expires_on       = "2027-10-01T11:29:59Z" -> (known after apply)
+        hostname         = "origin.iforecast.es"
+        id               = "origin.iforecast.es"
+      ~ issuer           = "CN=cf-assessment AOP private CA,O=iforecast.es cf-assessment" -> (known after apply)
+      + private_key      = (sensitive value)
+      ~ serial_number    = "28252689117903853399258494582623818032245154877" -> (known after apply)
+      ~ signature        = "ECDSA-SHA256" -> (known after apply)
+      ~ status           = "active" -> (known after apply)
+      ~ updated_at       = "2026-10-01T11:33:06Z" -> (known after apply)
+        zone_id          = "f69cacb142bf5ad627e656725111f0fe"
+    }
+
+  # cloudflare_authenticated_origin_pulls_hostname_certificate.origin will be imported
+    resource "cloudflare_authenticated_origin_pulls_hostname_certificate" "origin" {
+        certificate   = <<-EOT
+            -----BEGIN CERTIFICATE-----
+            MIICFTCCAbugAwIBAgIUBPLk9yJTcXU0EApipk+keziMpD0wCgYIKoZIzj0EAwIw
+            TDEjMCEGA1UECgwaaWZvcmVjYXN0LmVzIGNmLWFzc2Vzc21lbnQxJTAjBgNVBAMM
+            HGNmLWFzc2Vzc21lbnQgQU9QIHByaXZhdGUgQ0EwHhcNMjYxMDAxMTEyOTU5WhcN
+            MjcxMDAxMTEyOTU5WjBSMSMwIQYDVQQKDBppZm9yZWNhc3QuZXMgY2YtYXNzZXNz
+            bWVudDErMCkGA1UEAwwiY2xvdWRmbGFyZS1hb3Atb3JpZ2luLmlmb3JlY2FzdC5l
+            czBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABP48rKrfoaFsMwb2T+cvSFDyFkiG
+            bXrsNVIl4aGE3ixPOx42u5zGUIcSe1wZy8USf8wcFTH6DxP8RZuMKyWXkxujdTBz
+            MAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUF
+            BwMCMB0GA1UdDgQWBBRuqLebu79UPmEk8NtWj4B1rBD+gDAfBgNVHSMEGDAWgBRD
+            NgNSU+vKAWMH7VrzUNX8XyCG8jAKBggqhkjOPQQDAgNIADBFAiEAxiRavCz3HGD4
+            8vP9rp7yjPem+N6q6ZPUqDHfWjiszX4CIDJ+0BcXmTcqsg7sxv3bmZV97g+8cKK0
+            eSAMyAa4odK9
+            -----END CERTIFICATE-----
+        EOT
+        expires_on    = "2027-10-01T11:29:59Z"
+        id            = "f9deeaa7-daec-48cf-a343-c2959f44ff63"
+        issuer        = "CN=cf-assessment AOP private CA,O=iforecast.es cf-assessment"
+        serial_number = "28252689117903853399258494582623818032245154877"
+        signature     = "ECDSA-SHA256"
+        status        = "active"
+        uploaded_on   = "2026-10-01T11:30:22Z"
+        zone_id       = "f69cacb142bf5ad627e656725111f0fe"
+    }
+
+  # cloudflare_dns_record.origin will be imported
+    resource "cloudflare_dns_record" "origin" {
+        comment                 = "cf-assessment origin (managed by infra/cloudflare)"
+        comment_modified_on     = "2026-10-01T11:30:36Z"
+        content                 = "68.221.177.94"
+        created_on              = "2026-10-01T11:30:36Z"
+        id                      = "cafac84ada372ddc039d193edc3d1724"
+        include_shadow_metadata = false
+        meta                    = jsonencode({})
+        modified_on             = "2026-10-01T11:30:36Z"
+        name                    = "origin.iforecast.es"
+        proxiable               = true
+        proxied                 = true
+        settings                = {}
+        tags                    = []
+        ttl                     = 1
+        type                    = "A"
+        zone_id                 = "f69cacb142bf5ad627e656725111f0fe"
+    }
+
+  # cloudflare_dns_record.tunnel will be imported
+    resource "cloudflare_dns_record" "tunnel" {
+        comment                 = "cf-assessment tunnel (managed by infra/cloudflare)"
+        comment_modified_on     = "2026-10-01T11:31:34Z"
+        content                 = "f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6.cfargotunnel.com"
+        created_on              = "2026-10-01T11:31:34Z"
+        id                      = "615b34105426877e5a6a082e0870794f"
+        include_shadow_metadata = false
+        meta                    = jsonencode({})
+        modified_on             = "2026-10-01T11:31:34Z"
+        name                    = "tunnel.iforecast.es"
+        proxiable               = true
+        proxied                 = true
+        settings                = {
+            flatten_cname = false
+            ipv4_only     = false
+            ipv6_only     = false
+        }
+        tags                    = []
+        ttl                     = 1
+        type                    = "CNAME"
+        zone_id                 = "f69cacb142bf5ad627e656725111f0fe"
+    }
+
+  # cloudflare_r2_bucket.flags will be imported
+    resource "cloudflare_r2_bucket" "flags" {
+        account_id    = "79ef45910a0655be919de9aab5b2debb"
+        creation_date = "2026-10-01T11:33:56.264Z"
+        id            = "cf-assessment-flags"
+        jurisdiction  = "default"
+        location      = "WNAM"
+        name          = "cf-assessment-flags"
+        storage_class = "Standard"
+    }
+
+  # cloudflare_ruleset.config_settings will be imported
+    resource "cloudflare_ruleset" "config_settings" {
+        description  = ""
+        id           = "5c135dd52cea402db74278159c1630e7"
+        kind         = "zone"
+        last_updated = "2026-10-01T11:30:36Z"
+        name         = "default"
+        phase        = "http_config_settings"
+        rules        = [
+            {
+                action            = "set_config"
+                action_parameters = {
+                    ssl = "strict"
+                }
+                description       = "cf-assessment: SSL Full (strict) only for origin+tunnel hosts"
+                enabled           = true
+                expression        = "(http.host in {\"origin.iforecast.es\" \"tunnel.iforecast.es\"})"
+                id                = "75dccd55126c4c78a0135ba8a2f0b23c"
+                ref               = "75dccd55126c4c78a0135ba8a2f0b23c"
+            },
+        ]
+        version      = "1"
+        zone_id      = "f69cacb142bf5ad627e656725111f0fe"
+    }
+
+  # cloudflare_ruleset.redirects will be imported
+    resource "cloudflare_ruleset" "redirects" {
+        description  = ""
+        id           = "2fdef789246743c4861f84b3ac9a3ed1"
+        kind         = "zone"
+        last_updated = "2026-10-01T11:30:36Z"
+        name         = "default"
+        phase        = "http_request_dynamic_redirect"
+        rules        = [
+            {
+                action            = "redirect"
+                action_parameters = {
+                    from_value = {
+                        preserve_query_string = false
+                        status_code           = 301
+                        target_url            = {
+                            expression = "concat(\"https://\", http.host, http.request.uri)"
+                        }
+                    }
+                }
+                description       = "cf-assessment: Always HTTPS for origin+tunnel hosts"
+                enabled           = true
+                expression        = "(http.host in {\"origin.iforecast.es\" \"tunnel.iforecast.es\"} and not ssl)"
+                id                = "8861d7c8e155470db384f3ca634a8436"
+                ref               = "8861d7c8e155470db384f3ca634a8436"
+            },
+        ]
+        version      = "1"
+        zone_id      = "f69cacb142bf5ad627e656725111f0fe"
+    }
+
+  # cloudflare_zero_trust_access_application.secure will be imported
+    resource "cloudflare_zero_trust_access_application" "secure" {
+        account_id                 = "79ef45910a0655be919de9aab5b2debb"
+        app_launcher_visible       = false
+        aud                        = "56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733"
+        auto_redirect_to_identity  = false
+        destinations               = [
+            {
+                type = "public"
+                uri  = "tunnel.iforecast.es/secure"
+            },
+            {
+                type = "public"
+                uri  = "tunnel.iforecast.es/secure/*"
+            },
+        ]
+        domain                     = "tunnel.iforecast.es/secure"
+        enable_binding_cookie      = false
+        http_only_cookie_attribute = true
+        id                         = "12466994-8322-407c-9c72-0fc96c4d567e"
+        name                       = "cf-assessment-secure"
+        options_preflight_bypass   = false
+        policies                   = [
+            {
+                id         = "1262eec6-1476-41a8-9d2c-5ee099b26919"
+                precedence = 1
+            },
+        ]
+        same_site_cookie_attribute = "lax"
+        self_hosted_domains        = [
+            "tunnel.iforecast.es/secure",
+            "tunnel.iforecast.es/secure/*",
+        ]
+        session_duration           = "24h"
+        type                       = "self_hosted"
+    }
+
+  # cloudflare_zero_trust_access_policy.allow_owner_and_cloudflare will be imported
+    resource "cloudflare_zero_trust_access_policy" "allow_owner_and_cloudflare" {
+        account_id       = "79ef45910a0655be919de9aab5b2debb"
+        app_count        = 1
+        created_at       = "2026-10-01T11:33:37Z"
+        decision         = "allow"
+        id               = "1262eec6-1476-41a8-9d2c-5ee099b26919"
+        include          = [
+            {
+                email = {
+                    email = "<candidate-email>"
+                }
+            },
+            {
+                email_domain = {
+                    domain = "cloudflare.com"
+                }
+            },
+        ]
+        name             = "cf-assessment-allow-owner-and-cloudflare"
+        reusable         = true
+        session_duration = "24h"
+        updated_at       = "2026-10-01T11:33:37Z"
+    }
+
+  # cloudflare_zero_trust_tunnel_cloudflared.this will be imported
+    resource "cloudflare_zero_trust_tunnel_cloudflared" "this" {
+        account_id      = "79ef45910a0655be919de9aab5b2debb"
+        account_tag     = "79ef45910a0655be919de9aab5b2debb"
+        config_src      = "cloudflare"
+        connections     = [
+            {
+                client_id      = "80da144a-a88a-4f9a-bc9d-40533511e575"
+                client_version = "2026.9.3"
+                colo_name      = "mad05"
+                id             = "2396f70f-b660-4f89-ad1f-01708d01a41f"
+                opened_at      = "2026-10-01T11:32:53Z"
+                origin_ip      = "68.221.177.94"
+                uuid           = "2396f70f-b660-4f89-ad1f-01708d01a41f"
+            },
+            {
+                client_id      = "80da144a-a88a-4f9a-bc9d-40533511e575"
+                client_version = "2026.9.3"
+                colo_name      = "mad07"
+                id             = "187f8187-8fb5-400d-93d8-619389c614da"
+                opened_at      = "2026-10-01T11:32:53Z"
+                origin_ip      = "68.221.177.94"
+                uuid           = "187f8187-8fb5-400d-93d8-619389c614da"
+            },
+            {
+                client_id      = "80da144a-a88a-4f9a-bc9d-40533511e575"
+                client_version = "2026.9.3"
+                colo_name      = "mad05"
+                id             = "774ec671-6886-45b9-a5a9-9f3104ad25dd"
+                opened_at      = "2026-10-01T11:32:54Z"
+                origin_ip      = "68.221.177.94"
+                uuid           = "774ec671-6886-45b9-a5a9-9f3104ad25dd"
+            },
+            {
+                client_id      = "80da144a-a88a-4f9a-bc9d-40533511e575"
+                client_version = "2026.9.3"
+                colo_name      = "mad01"
+                id             = "9336aafc-c4c8-4fb6-bb37-0f7622e1283c"
+                opened_at      = "2026-10-01T11:32:55Z"
+                origin_ip      = "68.221.177.94"
+                uuid           = "9336aafc-c4c8-4fb6-bb37-0f7622e1283c"
+            },
+        ]
+        conns_active_at = "2026-10-01T11:32:53Z"
+        created_at      = "2026-10-01T11:31:28Z"
+        id              = "f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6"
+        metadata        = jsonencode({})
+        name            = "cf-assessment"
+        remote_config   = true
+        status          = "healthy"
+        tun_type        = "cfd_tunnel"
+    }
+
+  # cloudflare_zero_trust_tunnel_cloudflared_config.this will be imported
+    resource "cloudflare_zero_trust_tunnel_cloudflared_config" "this" {
+        account_id = "79ef45910a0655be919de9aab5b2debb"
+        config     = {
+            ingress = [
+                {
+                    hostname       = "tunnel.iforecast.es"
+                    origin_request = {
+                        http2_origin       = true
+                        no_tls_verify      = false
+                        origin_server_name = "tunnel.iforecast.es"
+                    }
+                    service        = "https://127.0.0.1:8443"
+                },
+                {
+                    service = "http_status:404"
+                },
+            ]
+        }
+        created_at = "2026-10-01T11:31:34Z"
+        id         = "f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6"
+        source     = "cloudflare"
+        tunnel_id  = "f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6"
+        version    = 1
+    }
+
+Plan: 11 to import, 0 to add, 1 to change, 0 to destroy.
+
+Changes to Outputs:
+  + access_app_aud      = "56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733"
+  + access_team_domain  = "https://iforecast.cloudflareaccess.com"
+  + aop_certificate_id  = "f9deeaa7-daec-48cf-a343-c2959f44ff63"
+  + r2_bucket           = "cf-assessment-flags"
+  + tunnel_cname_target = "f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6.cfargotunnel.com"
+  + tunnel_id           = "f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6"
+  + tunnel_token        = (sensitive value)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.

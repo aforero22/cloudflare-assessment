@@ -1,0 +1,28 @@
+# Final login tests run by the candidate (2026-10-01, Europe/Madrid)
+# Tests 15 and 17 of the test matrix. No personal mailbox is named here; the candidate's address is <candidate-email>.
+
+## Test 17 - full GitHub login through to /secure (candidate, browser)
+1. Browser without an Access session -> https://tunnel.iforecast.es/secure -> redirected to iforecast.cloudflareaccess.com.
+2. Clicked "GitHub" -> GitHub sign-in for the OAuth app "iforecast Cloudflare Access" -> authorized.
+3. Back on https://tunnel.iforecast.es/secure: "<candidate-email> authenticated at <timestamp> from ES" (identity page
+   rendered by the Worker).
+Result: PASS (~18:17-18:30 Europe/Madrid; matches the 18:17:15 github entry in the log below).
+
+## Test 15 - mailbox outside the policy is denied (candidate, browser)
+1. Browser without an Access session -> https://tunnel.iforecast.es/secure -> e-mail form.
+2. Entered a mailbox outside the policy (neither the candidate's address nor @cloudflare.com) and clicked
+   "Send login code".
+3. No code arrived in that mailbox. Cloudflare Access only sends one-time PINs to addresses an Access policy
+   allows, so that user cannot log in.
+Result: PASS (denied, 2026-10-01). No allowed login for any address other than the candidate's appears in the log below.
+
+## Access authentication log (read-only API export, e-mail masked)
+# GET /accounts/<account-id>/access/logs/access_requests?since=2026-10-01T10:00:00Z  (times converted to Europe/Madrid)
+time (Madrid)        app                   allowed  method      user               country  ray
+2026-10-01 18:17:15  tunnel.iforecast.es   true     github      <candidate-email>  ES       a43cc6c5a93a013d
+2026-10-01 17:35:01  tunnel.iforecast.es   true     github      <candidate-email>  ES       a43c88ee7871036a
+2026-10-01 15:57:47  tunnel.iforecast.es   true     onetimepin  <candidate-email>  US       a43bfa7beb9fc36d
+2026-10-01 13:53:12  tunnel.iforecast.es   true     onetimepin  <candidate-email>  ES       a43b43ffd945014c
+
+Both GitHub entries are allowed logins of the candidate through the GitHub IdP; the One-time PIN entries are the
+earlier end-to-end tests (evidence 12 and screenshot 13).

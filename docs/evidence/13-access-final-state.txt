@@ -1,0 +1,66 @@
+# Access application, policy and Worker routes - final state (read-only API export, sanitized)
+# Run from: agent box, 2026-10-01 16:14 Europe/Madrid. Candidate e-mail replaced with <candidate-email>; account ID replaced with <account-id>.
+# Update 17:37: allowed_idps now lists One-time PIN + GitHub (was [] below); see 16-idp-order.txt.
+
+## Access application cf-assessment-secure
+{
+  "name": "cf-assessment-secure",
+  "type": "self_hosted",
+  "domain": "tunnel.iforecast.es/secure",
+  "destinations": [
+    {
+      "type": "public",
+      "uri": "origin.iforecast.es/secure"
+    },
+    {
+      "type": "public",
+      "uri": "origin.iforecast.es/secure/*"
+    },
+    {
+      "type": "public",
+      "uri": "tunnel.iforecast.es/secure"
+    },
+    {
+      "type": "public",
+      "uri": "tunnel.iforecast.es/secure/*"
+    }
+  ],
+  "aud": "56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733",
+  "session_duration": "24h",
+  "allowed_idps": [],
+  "auto_redirect_to_identity": false,
+  "policies": [
+    {
+      "name": "cf-assessment-allow-owner-and-cloudflare",
+      "decision": "allow",
+      "include": [
+        {
+          "email": {
+            "email": "<candidate-email>"
+          }
+        },
+        {
+          "email_domain": {
+            "domain": "cloudflare.com"
+          }
+        }
+      ],
+      "exclude": [],
+      "require": [],
+      "precedence": 1
+    }
+  ]
+}
+
+## Worker routes (zone iforecast.es)
+origin.iforecast.es/secure -> cf-assessment-secure
+tunnel.iforecast.es/secure -> cf-assessment-secure
+origin.iforecast.es/secure/* -> cf-assessment-secure
+tunnel.iforecast.es/secure/* -> cf-assessment-secure
+
+## Worker workers.dev subdomain and preview URLs
+{"enabled": false, "previews_enabled": false}
+
+## Zero Trust login methods
+# SUPERSEDED: GitHub was added later (allowed_idps = [OTP, GitHub]); see 15-github-idp.txt and 16-idp-order.txt.
+onetimepin

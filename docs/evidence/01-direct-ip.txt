@@ -1,0 +1,9 @@
+﻿# Direct to origin IP (must fail: NSG/ufw only allow Cloudflare on 443)
+# Run from: candidate workstation, non-Cloudflare residential IP (Windows curl.exe), 2026-10-01 13:36:10 Europe/Madrid
+# Command: curl.exe -sv --connect-timeout 10 --max-time 15 https://68.221.177.94/
+
+*   Trying 68.221.177.94:443...
+* Connection timed out after 10003 milliseconds
+* closing connection #0
+
+# curl exit code: 28

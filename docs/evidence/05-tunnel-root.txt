@@ -1,0 +1,41 @@
+﻿# tunnel.iforecast.es through Cloudflare Tunnel - must return all headers
+# Run from: candidate workstation, non-Cloudflare residential IP (Windows curl.exe), 2026-10-01 13:36:30 Europe/Madrid
+# Command: curl.exe -s -i -H "X-Probe: cf-assessment-evidence" https://tunnel.iforecast.es/
+
+HTTP/1.1 200 OK
+Date: Thu, 01 Oct 2026 11:36:31 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 641
+Connection: keep-alive
+Cache-Control: no-store
+Server: cloudflare
+cf-cache-status: DYNAMIC
+Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ZIx%2FGO9ahJ1U%2Ft2hDImXzGhosQ1BbMOrx4QAPbuBXTt%2BUm3zx6l6IB5LOAPownpoqL36kkaCiiKtuC6WGNf4q6b4HuJXzx%2Bo8uquD8pL1vWjvCvkBbpsaMyv%2FbJLMFMiXGrs8RTk"}]}
+CF-RAY: a43b2b8a1f56ff33-MAD
+alt-svc: h3=":443"; ma=86400
+
+{
+  "method": "GET",
+  "path": "/",
+  "http_version": "HTTP/1.1",
+  "received_at": "2026-10-01T11:36:31+00:00",
+  "header_count": 13,
+  "headers": {
+    "Host": "tunnel.iforecast.es",
+    "accept": "*/*",
+    "cf-ray": "a43b2b8a1f56ff33-MAD",
+    "cdn-loop": "cloudflare; loops=1",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "cf-warp-tag-id": "80da144a-a88a-4f9a-bc9d-40533511e575",
+    "cf-ipcountry": "ES",
+    "x-forwarded-for": "<redacted-admin-ip>",
+    "accept-encoding": "gzip, br",
+    "cf-connecting-ip": "<redacted-admin-ip>",
+    "x-forwarded-proto": "https",
+    "user-agent": "curl/8.21.0",
+    "x-probe": "cf-assessment-evidence"
+  }
+}
+
+# curl exit code: 0

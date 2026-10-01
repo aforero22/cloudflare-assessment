@@ -1,0 +1,35 @@
+# Requirement 5 - GitHub as federated SSO identity provider (2026-10-01, Europe/Madrid)
+# Read-only checks from the agent box. Account ID replaced with <account-id>. No secrets shown:
+# the GitHub client secret was entered in the dashboard, is never returned by the API and is not in Terraform.
+
+## Identity providers (GET /accounts/<account-id>/access/identity_providers)
+{"id": "85134fd8-55cf-42d8-bb85-dbd9c0ad2806", "type": "onetimepin", "name": "", "client_id": null, "redirect_url": "https://iforecast.cloudflareaccess.com/cdn-cgi/access/callback"}
+{"id": "bed3561d-2c26-4e60-b5a3-01c0dde988f4", "type": "github", "name": "GitHub", "client_id": "Ov23liHGsF1STW7lSMa9", "redirect_url": "https://iforecast.cloudflareaccess.com/cdn-cgi/access/callback"}
+
+## Access application cf-assessment-secure: allowed_idps (empty = all configured IdPs are offered)
+# Superseded at 17:37: allowed_idps now lists One-time PIN + GitHub explicitly (see 16-idp-order.txt).
+{"allowed_idps": [], "auto_redirect_to_identity": false}
+
+## 17:13 Access login page for https://tunnel.iforecast.es/secure (no session) offers GitHub and the e-mail (OTP) form
+GitHub button present: True | Send login code present: True
+GitHub button target: https://github.com/login/oauth/authorize?client_id=Ov23liHGsF1STW7lSMa9&redirect_uri=https%3A%2F%2Fiforecast.cloudflareaccess.com%2Fcdn-cgi%2Faccess%2Fcallback&response_type=code&scope=user%3Aemail%2Cread%3Aorg&state=<state>
+GitHub sign-in page: 200 | 'to continue to': iforecast Cloudflare Access
+
+## Terraform (infra/cloudflare/identity_provider.tf)
+cloudflare_zero_trust_access_identity_provider.github imported: 1 imported, 0 added, 0 changed, 0 destroyed.
+Follow-up plan: "No changes. Your infrastructure matches the configuration." (exit 0)
+client_secret: not in configuration, lifecycle ignore_changes, null in state.
+
+## What went wrong first (kept for honesty)
+1. The GitHub OAuth app client ID was transcribed by hand into the dashboard with two look-alike characters
+   ("0v23Ii..." instead of "Ov23li..."). The IdP saved without complaint; the dashboard "Test" opened a GitHub 404.
+2. Finding the right value: GitHub's sign-in page names the OAuth app ("to continue to <app>") only for a valid
+   client ID, which identified "Ov23liHGsF1STW7lSMa9" among the look-alike variants.
+3. Fix: client ID corrected in the dashboard and, as a precaution, a new client secret generated on GitHub (old one
+   deleted) and set in Zero Trust; dashboard "Test" then reported "Your connection works!".
+Lesson: copy/paste OAuth client IDs (never retype them), and run the IdP "Test" immediately after saving.
+
+## Full GitHub login (update)
+Done on 2026-10-01 at 18:17 Europe/Madrid by the candidate: GitHub login through to /secure, identity page
+shown. See 17-final-logins.txt (includes the masked Access authentication log).
+The GitHub account's primary e-mail is the candidate address already in the Access policy.

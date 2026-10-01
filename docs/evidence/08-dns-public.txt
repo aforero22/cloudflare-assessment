@@ -1,0 +1,22 @@
+# Public DNS: proxied records resolve to Cloudflare anycast IPs, not the origin
+# Run from: candidate workstation, non-Cloudflare residential IP (Windows curl.exe), 2026-10-01 13:36:31 Europe/Madrid
+# Command: nslookup origin.iforecast.es 1.1.1.1 & nslookup tunnel.iforecast.es 1.1.1.1
+
+Server:  one.one.one.one
+Address:  1.1.1.1
+
+Name:    origin.iforecast.es
+Addresses:  188.114.96.5
+	  188.114.97.5
+
+Non-authoritative answer:
+
+Server:  one.one.one.one
+Address:  1.1.1.1
+
+Name:    tunnel.iforecast.es
+Addresses:  188.114.96.5
+	  188.114.97.5
+
+
+# command exit code: 0

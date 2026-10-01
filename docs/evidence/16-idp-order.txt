@@ -1,0 +1,27 @@
+# Access login page: e-mail One-time PIN as the main method, GitHub SSO optional (2026-10-01, Europe/Madrid)
+# Read-only checks from the agent box after the Terraform change. Account ID not shown. No secrets.
+
+## Change (infra/cloudflare/access.tf), applied 17:37 with Terraform
+cloudflare_zero_trust_access_application.secure: + allowed_idps = [One-time PIN 85134fd8-..., GitHub bed3561d-...]
+Plan before apply: 0 to add, 1 to change, 0 to destroy (only allowed_idps on this application).
+auto_redirect_to_identity stays false, so the login page is shown and offers both methods.
+
+## Access application cf-assessment-secure (GET /accounts/<account-id>/access/apps/<app-id>)
+{"allowed_idps": ["85134fd8-55cf-42d8-bb85-dbd9c0ad2806", "bed3561d-2c26-4e60-b5a3-01c0dde988f4"], "auto_redirect_to_identity": false}
+
+## 17:39 Login page for https://tunnel.iforecast.es/secure (no session), curl -L to iforecast.cloudflareaccess.com
+Visible text, top to bottom: iforecast.cloudflareaccess.com | Log in to cf-assessment-secure | Sign in with: | GitHub ・ GitHub | or | Email | Send login code
+GitHub control class: "Button-is-block Button Button-is-auth js-idp"
+Send login code class: "Button-is-block Button Button-is-primary"
+
+## Can the order be changed? No.
+- Cloudflare renders the login page with a fixed layout: IdP buttons ("Sign in with:") come first, then "or", then
+  the e-mail (One-time PIN) form. Changing allowed_idps had no effect on the layout (same order before and after).
+- allowed_idps is a set in the Terraform provider (no order), and the docs list only branding options for the
+  login page (name, logo, header, footer, background colour), with no ordering control.
+- What we can do: the e-mail form's "Send login code" is the page's primary (blue) button and the GitHub button is a
+  neutral one. README and docs/ACCESS.md tell reviewers to use the e-mail form and treat GitHub as optional.
+  Screenshot: docs/screenshots/12-access-login-page.png (fresh capture).
+
+## Terraform after apply
+terraform plan: "No changes. Your infrastructure matches the configuration." (exit 0, -detailed-exitcode)

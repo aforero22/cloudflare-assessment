@@ -1,0 +1,58 @@
+# Worker deployment and verification, 2026-10-01 13:43 Europe/Madrid (agent box)
+
+## npm ci / lint / test
+npm run lint -> tsc --noEmit && eslint . : OK (no findings)
+npm test     -> Test Files 1 passed (1), Tests 39 passed (39)
+
+## wrangler deploy
+Total Upload: 41.40 KiB / gzip: 11.66 KiB
+Worker Startup Time: 2 ms
+Your Worker has access to the following bindings:
+Binding                                                           Resource                  
+env.FLAGS (cf-assessment-flags)                                   R2 Bucket                 
+env.TEAM_DOMAIN ("https://iforecast.cloudflareaccess.com")        Environment Variable      
+env.POLICY_AUD ("56caad5eb8cc92a41b86e6807e0f6d29fd3cd...")       Environment Variable      
+
+Uploaded cf-assessment-secure (1.10 sec)
+Deployed cf-assessment-secure triggers (1.65 sec)
+  tunnel.iforecast.es/secure (zone name: iforecast.es)
+  tunnel.iforecast.es/secure/* (zone name: iforecast.es)
+  origin.iforecast.es/secure (zone name: iforecast.es)
+  origin.iforecast.es/secure/* (zone name: iforecast.es)
+Current Version ID: 1b774c83-3572-463c-af1d-380711c7c165
+
+## Worker object (GET /accounts/{account}/workers/workers/cf-assessment-secure)
+{"name":"cf-assessment-secure","subdomain":{"enabled":false,"previews_enabled":false},"observability":{"enabled":true}}
+
+## Zone routes
+{"pattern":"origin.iforecast.es/secure","script":"cf-assessment-secure"}
+{"pattern":"tunnel.iforecast.es/secure","script":"cf-assessment-secure"}
+{"pattern":"origin.iforecast.es/secure/*","script":"cf-assessment-secure"}
+{"pattern":"tunnel.iforecast.es/secure/*","script":"cf-assessment-secure"}
+
+## Unauthenticated requests (must be intercepted by Access before the Worker runs)
+$ curl -sI https://tunnel.iforecast.es/secure
+HTTP/2 302 
+location: https://iforecast.cloudflareaccess.com/cdn-cgi/access/login/tunnel.iforecast.es?kid=56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733&meta=<truncated>&redirect_url=%2Fsecure
+$ curl -sI https://tunnel.iforecast.es/secure/ES
+HTTP/2 302 
+location: https://iforecast.cloudflareaccess.com/cdn-cgi/access/login/tunnel.iforecast.es?kid=56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733&meta=<truncated>&redirect_url=%2Fsecure%2FES
+$ curl -sI https://origin.iforecast.es/secure
+HTTP/2 302 
+location: https://iforecast.cloudflareaccess.com/cdn-cgi/access/login/origin.iforecast.es?kid=56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733&meta=<truncated>&redirect_url=%2Fsecure
+$ curl -sI https://origin.iforecast.es/secure/ES
+HTTP/2 302 
+location: https://iforecast.cloudflareaccess.com/cdn-cgi/access/login/origin.iforecast.es?kid=56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733&meta=<truncated>&redirect_url=%2Fsecure%2FES
+
+## Forged identity header is ignored (Access still redirects)
+$ curl -sI -H "Cf-Access-Jwt-Assertion: forged" -H "Cf-Access-Authenticated-User-Email: attacker@cloudflare.com" https://tunnel.iforecast.es/secure
+HTTP/2 302 
+location: https://iforecast.cloudflareaccess.com/cdn-cgi/access/login/tunnel.iforecast.es?kid=56caad5eb8cc92a41b86e6807e0f6d29fd3cd9e6ab681789a1d4c188ae993733&meta=<truncated>&redirect_url=%2Fsecure
+
+## workers.dev URL disabled
+$ curl -sI https://cf-assessment-secure.<workers-subdomain>.workers.dev/secure
+HTTP/2 404 
+
+## Workers Observability (last 60 min): events / errors for cf-assessment-secure
+{"events":0,"errors":0}
+(0 events is expected while nobody has authenticated: Access blocks unauthenticated requests before the Worker is invoked.)

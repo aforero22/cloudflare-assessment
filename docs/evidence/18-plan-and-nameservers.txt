@@ -1,0 +1,31 @@
+# Plan and nameserver delegation (2026-10-01, Europe/Madrid). Read-only checks. Account ID not shown.
+
+## Zone (GET /zones/<zone-id>)
+{"name": "iforecast.es", "status": "active", "plan": "Free Website", "name_servers": ["ian.ns.cloudflare.com", "raphaela.ns.cloudflare.com"], "original_name_servers": ["ns61.domaincontrol.com", "ns62.domaincontrol.com"], "activated_on": "2025-12-26T01:17:26Z"}
+
+## Public delegation (resolver queries)
+> Resolve-DnsName iforecast.es -Type NS -Server 1.1.1.1
+iforecast.es  NS  ian.ns.cloudflare.com
+iforecast.es  NS  raphaela.ns.cloudflare.com
+> Resolve-DnsName iforecast.es -Type NS -Server 8.8.8.8
+iforecast.es  NS  raphaela.ns.cloudflare.com
+iforecast.es  NS  ian.ns.cloudflare.com
+> curl -H 'accept: application/dns-json' 'https://dns.google/resolve?name=iforecast.es&type=NS'
+"Answer":[{"name":"iforecast.es.","type":2,"data":"raphaela.ns.cloudflare.com."},{"name":"iforecast.es.","type":2,"data":"ian.ns.cloudflare.com."}]
+
+The registrar delegates iforecast.es to the two Cloudflare nameservers assigned to the zone; the zone was activated
+on 2025-12-26, before this assessment.
+
+## Leftover apex NS records inside the zone (dns_records?type=NS)
+iforecast.es NS ns61.domaincontrol.com (DNS only)
+iforecast.es NS ns62.domaincontrol.com (DNS only)
+These were copied from the previous DNS provider when the zone was added. They are not the delegation (the registrar
+and public resolvers return the Cloudflare nameservers above) and they appear in screenshot 02. They were left in
+place on purpose: this assessment does not modify existing records on the shared zone.
+
+## Plans
+- Zone iforecast.es: Free (plan "Free Website").
+- Zero Trust: Free ("Teams Free").
+- The account also has Workers Paid and R2 pay-as-you-go subscriptions from other projects. Nothing in this
+  assessment depends on them: Configuration and Redirect Rules, per-hostname AOP, Tunnel, Access, one Worker and one
+  small R2 bucket all fit the free plans and free allowances.

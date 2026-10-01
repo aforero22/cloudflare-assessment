@@ -1,0 +1,48 @@
+# Worker redeploy, route re-import and Terraform plan (2026-10-01, Europe/Madrid)
+# Account ID replaced with <account-id>. No tokens shown (token passed as process env only).
+
+## 16:15 wrangler deploy (worker/), after the auth.ts change (identity lookup bound to the verified token; iat required)
+Worker version: 9ab0cfa4-a531-4e26-99ba-8b5c6740e659 (100% of traffic), created 2026-10-01T14:15:08Z (16:15 CEST)
+Live checks right after deploy (no session):
+  GET https://tunnel.iforecast.es/secure     -> 302 to iforecast.cloudflareaccess.com
+  GET https://tunnel.iforecast.es/secure/ES  -> 302 to iforecast.cloudflareaccess.com
+  GET https://origin.iforecast.es/secure     -> 302 to iforecast.cloudflareaccess.com
+  GET https://tunnel.iforecast.es/           -> 200 (echo via tunnel)
+
+## Side effect found by terraform plan
+wrangler deploy re-created the four routes declared in wrangler.jsonc with new IDs, so the next plan
+wanted to create 4 cloudflare_workers_route resources (Terraform and Wrangler both declare the routes).
+Fix (state only, no API writes): state backup, `terraform state rm` of the 4 routes, imports.tf updated
+with the new route IDs, `terraform apply` of the 4 imports (4 imported, 0 added, 0 changed, 0 destroyed).
+
+## Current Worker routes (GET /zones/{zone}/workers/routes)
+278da6b26d504ccc8211cfb5bdfd7f2d origin.iforecast.es/secure -> cf-assessment-secure
+5f6d1771c92241ad82b0512263816a59 tunnel.iforecast.es/secure -> cf-assessment-secure
+b7485faf7ff4435e82d2bd398c149661 origin.iforecast.es/secure/* -> cf-assessment-secure
+6132ac48290248dc84198751e912b1e7 tunnel.iforecast.es/secure/* -> cf-assessment-secure
+
+## terraform plan -detailed-exitcode (16:18) -> exit 0
+Warning: Deprecated flag: -state
+Use the "path" attribute within the "local" backend to specify a file for
+state storage
+cloudflare_r2_bucket.flags: Refreshing state... [id=cf-assessment-flags]
+cloudflare_dns_record.origin: Refreshing state... [id=cafac84ada372ddc039d193edc3d1724]
+cloudflare_zero_trust_tunnel_cloudflared.this: Refreshing state... [id=f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6]
+cloudflare_authenticated_origin_pulls_hostname_certificate.origin: Refreshing state... [id=f9deeaa7-daec-48cf-a343-c2959f44ff63]
+cloudflare_worker.secure: Refreshing state... [id=41d0347049724ce9a2ed79d264e67177]
+cloudflare_ruleset.config_settings: Refreshing state... [id=5c135dd52cea402db74278159c1630e7]
+cloudflare_ruleset.redirects: Refreshing state... [id=2fdef789246743c4861f84b3ac9a3ed1]
+cloudflare_zero_trust_access_policy.allow_owner_and_cloudflare: Refreshing state... [id=1262eec6-1476-41a8-9d2c-5ee099b26919]
+cloudflare_dns_record.tunnel: Refreshing state... [id=615b34105426877e5a6a082e0870794f]
+cloudflare_zero_trust_tunnel_cloudflared_config.this: Refreshing state... [id=f80ec30d-28ee-4deb-b5b6-fff2dcb21cf6]
+data.cloudflare_zero_trust_tunnel_cloudflared_token.this: Reading...
+cloudflare_authenticated_origin_pulls.origin: Refreshing state... [id=origin.iforecast.es]
+cloudflare_zero_trust_access_application.secure: Refreshing state... [id=12466994-8322-407c-9c72-0fc96c4d567e]
+data.cloudflare_zero_trust_tunnel_cloudflared_token.this: Read complete after 0s
+cloudflare_workers_route.secure["tunnel.iforecast.es/secure"]: Refreshing state... [id=5f6d1771c92241ad82b0512263816a59]
+cloudflare_workers_route.secure["origin.iforecast.es/secure/*"]: Refreshing state... [id=b7485faf7ff4435e82d2bd398c149661]
+cloudflare_workers_route.secure["tunnel.iforecast.es/secure/*"]: Refreshing state... [id=6132ac48290248dc84198751e912b1e7]
+cloudflare_workers_route.secure["origin.iforecast.es/secure"]: Refreshing state... [id=278da6b26d504ccc8211cfb5bdfd7f2d]
+No changes. Your infrastructure matches the configuration.
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.

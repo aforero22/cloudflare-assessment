@@ -1,0 +1,23 @@
+# systemd unit for the echo-headers origin app (listens on 127.0.0.1:8080 only).
+[Unit]
+Description=cf-assessment echo-headers app
+After=network.target
+
+[Service]
+Type=simple
+Environment=APP_HOST=127.0.0.1
+Environment=APP_PORT=8080
+ExecStart=/usr/bin/python3 /opt/headers-app/headers_app.py
+# Run as an unprivileged, ephemeral user with a hardened sandbox.
+DynamicUser=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
