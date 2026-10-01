@@ -27,7 +27,7 @@ Cloudflare account ID and the workers.dev subdomain are blurred.
 | `19-r2-bucket-settings.png` | R2 → `cf-assessment-flags` → Settings | r2.dev public URL disabled, no custom domains |
 | `20-azure-nsg-rules.png` | Azure Portal → `nsg-cf-origin` → Inbound rules | 22 from one admin /32 (blurred), 443 from Cloudflare ranges |
 | `21-r2-objects.png` | R2 → `cf-assessment-flags` → Objects | Flag objects with type `image/svg+xml` |
-| `22-github-actions.png` | GitHub → Actions | Worker workflow run green (lint + tests), deploy skipped (manual) |
+| `22-github-actions.png` | GitHub → Actions → Worker run #1 (public view) | Worker workflow green on the push of the clean repository history (lint + tests), deploy skipped (manual) |
 | `23-idp-github-login.png` | Browser → `https://tunnel.iforecast.es/secure` (no session) | Access login: *Sign in with GitHub*, or e-mail + *Send login code* |
 
 The country in `/secure` is computed per request from `request.cf.country`; the candidate's own login from
